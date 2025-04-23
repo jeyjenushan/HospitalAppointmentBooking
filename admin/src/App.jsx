@@ -16,6 +16,9 @@ import AddDoctor from "./pages/Admin/AddDoctor";
 
 import DoctorProfile from "./pages/Doctor/DoctorProfile";
 import DoctorAppointments from "./pages/Doctor/DoctorAppointments";
+import AddAdmin from "./pages/Admin/AddAdmin";
+import AdminList from "./pages/Admin/AdminList";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const App = () => {
   const { dToken } = useContext(DoctorContext);
@@ -33,8 +36,10 @@ const App = () => {
           <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
           <Route path="/all-appointments" element={<AllAppointments />} />
           <Route path="/doctor-list" element={<DoctorsList />} />
-          <Route path="/add-doctor" element={<AddDoctor />} />
+          <Route path="/admin-list" element={<AdminList />} />
 
+          <Route path="/add-doctor" element={<AddDoctor />} />
+          <Route path="/add-admin" element={<AddAdmin />} />
           <Route path="/doctor-appointments" element={<DoctorAppointments />} />
           <Route path="/doctor-profile" element={<DoctorProfile />} />
         </Routes>
@@ -43,7 +48,10 @@ const App = () => {
   ) : (
     <>
       <ToastContainer />
-      <Login />
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/forgotPassword" element={<ForgotPassword />} />
+      </Routes>
     </>
   );
 };

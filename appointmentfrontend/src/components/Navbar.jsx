@@ -63,7 +63,8 @@ const Navbar = () => {
                 </p>
                 <p
                   onClick={() => {
-                    setToken(false);
+                    localStorage.removeItem("token");
+                    setToken(null); // Set to null instead of false
                     navigate("/");
                   }}
                   className="hover:text-black cursor-pointer"

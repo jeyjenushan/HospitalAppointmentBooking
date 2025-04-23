@@ -14,6 +14,83 @@ const AdminContextProvider = (props) => {
   const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [dashData, setDashData] = useState(null);
+  const [admins, setAdmins] = useState([]);
+
+  const sendOtp = async (email) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/forgotpassword/send-otp`,
+        {},
+        {
+          params: { email },
+        }
+      );
+      if (data.statusCode == 200) {
+        toast.success(data.message);
+        return true;
+      } else {
+        toast.error(data.message || "Failed to send otp your email"); // Display error if doctorDtos is missing
+        return false;
+      }
+    } catch (error) {
+      // Log error for debugging and show error message to the user
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while sending email to the user"
+      );
+      return false;
+    }
+  };
+
+  const verifyOtp = async (email, otp) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/forgotpassword/verify-otp`,
+        {},
+        {
+          params: { email, otp },
+        }
+      );
+      if (data.statusCode == 200) {
+        toast.success(data.message);
+        return true;
+      } else {
+        toast.error(data.message || "Wrong OTP provided"); // Display error if doctorDtos is missing
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message || "An error occurred verify  otp"
+      );
+      return false;
+    }
+  };
+
+  const resetPassword = async (email, otp, newPassword) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/forgotpassword/reset-password`,
+        {},
+        {
+          params: { email, newPassword, otp },
+        }
+      );
+      if (data.statusCode == 200) {
+        toast.success(data.message);
+        return true;
+      } else {
+        toast.error(data.message || "Wrong OTP provided");
+        return false;
+        // Display error if doctorDtos is missing
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Error resetting password");
+      return false;
+    }
+  };
 
   // Getting all Doctors data from Database using API
   const getAllDoctors = async () => {
@@ -25,6 +102,31 @@ const AdminContextProvider = (props) => {
         setDoctors(data.doctorDtos); // Update the state with doctors data
       } else {
         toast.error(data.message || "Failed to fetch doctors data"); // Display error if doctorDtos is missing
+      }
+    } catch (error) {
+      // Log error for debugging and show error message to the user
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while fetching doctors"
+      );
+    }
+  };
+
+  // Getting all Admin data from Database using API
+  const getAllAdmins = async () => {
+    try {
+      const { data } = await axios.get(backendUrl + "/api/admin/allAdmins", {
+        headers: {
+          Authorization: `Bearer ${aToken}`, // Use Bearer scheme if that's the expected format
+        },
+      }); // Send GET request to the backend
+
+      if (data && data.adminDtos) {
+        // Check if data and doctorDtos are availableA
+        setAdmins(data.adminDtos); // Update the state with doctors data
+      } else {
+        toast.error(data.message || "Failed to fetch admin data"); // Display error if doctorDtos is missing
       }
     } catch (error) {
       // Log error for debugging and show error message to the user
@@ -116,13 +218,18 @@ const AdminContextProvider = (props) => {
 
       if (data.statusCode == 200) {
         setDashData(data.dashboardData);
-        console.log(data.dashboardData);
       } else {
         toast.error(data.message || "Failed to load dashboard data");
       }
     } catch (error) {
-      console.log(error);
-      toast.error(error.message || "Something went wrong");
+      console.error(error);
+      const errorMessage =
+        error.response?.status === 403
+          ? "You don't have permission to view this data. Please contact support."
+          : error.message ||
+            "Failed to load dashboard. Please try again later.";
+      toast.error(errorMessage);
+      setDashData(null); // Clear any existing data
     }
   };
 
@@ -139,6 +246,11 @@ const AdminContextProvider = (props) => {
     cancelAppointment,
     getDashData,
     dashData,
+    admins,
+    getAllAdmins,
+    sendOtp,
+    verifyOtp,
+    resetPassword,
   };
 
   return (
