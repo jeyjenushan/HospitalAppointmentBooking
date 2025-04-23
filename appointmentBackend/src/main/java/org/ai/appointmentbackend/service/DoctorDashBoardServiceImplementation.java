@@ -24,32 +24,47 @@ public class DoctorDashBoardServiceImplementation implements DoctoDashBoardServi
     private DoctorRepository doctorRepository;
 
     public Response getDoctorDashBoard(String email) {
-
         Response response = new Response();
-        DoctorEntity doctor=doctorRepository.findByUserEmail(email);
-        List<AppointmentEntity> appointments = appointmentRepository.findByDoctorId(doctor.getId());
 
-        Double earnings = 0.0;
-        Set<Long> patients = new HashSet<>();
+        try {
+            DoctorEntity doctor = doctorRepository.findByUserEmail(email);
 
-        for (AppointmentEntity appointment : appointments) {
-            if (appointment.isCompleted() && appointment.isCompleted() || appointment.getAmount()!= null ) {
-                earnings += appointment.getAmount();
+            if (doctor == null) {
+                response.setStatusCode(404);
+                response.setMessage("Doctor not found");
+                return response;
             }
-            patients.add(appointment.getPatient().getId());
+
+            List<AppointmentEntity> appointments = appointmentRepository.findByDoctorId(doctor.getId());
+
+            Double earnings = 0.0;
+            Set<Long> patients = new HashSet<>();
+
+            for (AppointmentEntity appointment : appointments) {
+                if (appointment.isCompleted() && appointment.getAmount() != null) {
+                    earnings += appointment.getAmount();
+                }
+                patients.add(appointment.getPatient().getId());
+            }
+
+            appointments.sort((a, b) -> b.getId().compareTo(a.getId())); // Sort in reverse order
+
+            DoctorDashboard dashboard = new DoctorDashboard();
+            dashboard.setEarnings(earnings);
+            dashboard.setAppointments((long) appointments.size());
+            dashboard.setPatients((long) patients.size());
+            dashboard.setLatestAppointments(DtoConverter.convertAppointmentEntityListToAppointmentDtoList(appointments));
+
+            response.setStatusCode(200);
+            response.setMessage("Success");
+            response.setDoctorDashboard(dashboard);
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setMessage("An error occurred: " + e.getMessage());
+            response.setDoctorDashboard(null);
         }
-
-        appointments.sort((a, b) -> b.getId().compareTo(a.getId())); // Sort in reverse order
-
-        DoctorDashboard dashboard = new DoctorDashboard();
-        dashboard.setEarnings(earnings);
-        dashboard.setAppointments((long) appointments.size());
-        dashboard.setPatients((long) patients.size());
-        dashboard.setLatestAppointments(DtoConverter.convertAppointmentEntityListToAppointmentDtoList(appointments));
-        response.setStatusCode(200);
-        response.setMessage("Success");
-        response.setDoctorDashboard(dashboard);
 
         return response;
     }
+
 }

@@ -1,26 +1,34 @@
 package org.ai.appointmentbackend.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.ai.appointmentbackend.enumpack.Role;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+import org.ai.appointmentbackend.enumpack.Role;
 public class UserDto {
+
+
 private Long id;
 private String name;
 private String email;
-    private Long patientId;
+private Long patientId;
+private Long doctorId;
+private Long adminId;
+private String password;
+private Role role;
+private byte[] image;
 
+    public UserDto() {
+    }
 
-
-    private Long doctorId;
-    private Long adminId;
-
-
-
+    public UserDto(Long id, String name, Long patientId, String email, Long doctorId, Long adminId, String password, Role role, byte[] image) {
+        this.id = id;
+        this.name = name;
+        this.patientId = patientId;
+        this.email = email;
+        this.doctorId = doctorId;
+        this.adminId = adminId;
+        this.password = password;
+        this.role = role;
+        this.image = image;
+    }
 
     public Long getPatientId() {
         return patientId;
@@ -95,9 +103,7 @@ private String email;
         this.image = image;
     }
 
-    private String password;
-private Role role;
-    private byte[] image;
+
 
 
 }

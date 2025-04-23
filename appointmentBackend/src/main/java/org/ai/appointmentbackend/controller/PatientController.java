@@ -1,7 +1,4 @@
 package org.ai.appointmentbackend.controller;
-
-import lombok.AllArgsConstructor;
-
 import org.ai.appointmentbackend.configuration.JwtTokenProvider;
 import org.ai.appointmentbackend.dto.Response;
 import org.ai.appointmentbackend.entity.PatientEntity;

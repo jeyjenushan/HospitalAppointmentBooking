@@ -39,6 +39,13 @@ public class AppointmentEntity {
     @JoinColumn(name = "patient_id")
     private PatientEntity patient;
 
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id")
+    private DoctorEntity doctor;
+
+
     @Override
     public String toString() {
         return "AppointmentEntity{" +
@@ -53,11 +60,6 @@ public class AppointmentEntity {
 
                 '}';
     }
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "doctor_id")
-    private DoctorEntity doctor;
 
     public boolean isCompleted() {
         return isCompleted;

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DoctoDashBoardService {
 
-    public Response getDoctorDashBoard(String email);
+     Response getDoctorDashBoard(String email);
 
 
 }

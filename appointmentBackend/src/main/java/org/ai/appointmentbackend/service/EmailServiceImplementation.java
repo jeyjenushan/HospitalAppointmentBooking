@@ -33,7 +33,7 @@ public class EmailServiceImplementation implements EmailService{
 
         // Send the email
         mailSender.send(message);
-        System.out.println("Email sent successfully to " + to);
+
 
     }
 }

@@ -1,5 +1,6 @@
 package org.ai.appointmentbackend.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.ai.appointmentbackend.dto.AppointmentDto;
 import org.ai.appointmentbackend.dto.Response;
@@ -17,6 +18,8 @@ import org.ai.appointmentbackend.request.AppointmentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -32,7 +35,6 @@ public class AppointmentServiceImplementation implements AppointmentService{
     private DoctorRepository doctorRepository;
     @Autowired
     private  UserRepository userRepository;
-
 
 
     @Override
@@ -125,6 +127,7 @@ public class AppointmentServiceImplementation implements AppointmentService{
         }
         return response;
     }
+
 
 
     @Override
@@ -285,6 +288,7 @@ public class AppointmentServiceImplementation implements AppointmentService{
             if (appointments.isEmpty()) {
                 response.setStatusCode(200);
                 response.setMessage("You don't have any  appointments");
+                response.setAppointmentDtos(Collections.emptyList());
                 return response;
             }
 

@@ -14,7 +14,18 @@ public class DashboardData{
     private long doctorCount;
     private long appointmentCount;
     private long patientCount;
+    private Long adminCount;
     private List<AppointmentDto> latestAppointments;
+
+    public Long getAdminCount() {
+        return adminCount;
+    }
+
+    public void setAdminCount(Long adminCount) {
+        this.adminCount = adminCount;
+    }
+
+
 
     public long getDoctorCount() {
         return doctorCount;

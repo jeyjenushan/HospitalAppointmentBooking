@@ -3,12 +3,10 @@ package org.ai.appointmentbackend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ai.appointmentbackend.dto.Response;
-import org.ai.appointmentbackend.entity.AdminEntity;
 import org.ai.appointmentbackend.entity.PatientEntity;
 import org.ai.appointmentbackend.request.LoginRequest;
 import org.ai.appointmentbackend.service.AuthService;
 import org.ai.appointmentbackend.service.ForgotPasswordHandlerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,10 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
-    @Autowired
-    private ForgotPasswordHandlerService forgotPasswordHandlerService;
+    private final AuthService authService;
+    private final ForgotPasswordHandlerService forgotPasswordHandlerService;
+
+    public AuthController(AuthService authService, ForgotPasswordHandlerService forgotPasswordHandlerService) {
+        this.authService = authService;
+        this.forgotPasswordHandlerService = forgotPasswordHandlerService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Response> login(@RequestBody LoginRequest loginRequest){
@@ -30,8 +31,7 @@ public class AuthController {
     @PostMapping(value = "/auth/patient", consumes = {"multipart/form-data"})
     public ResponseEntity<Response> patientRegister(@RequestPart("patient") String patientString,  @RequestPart(value = "image", required = false) MultipartFile imageFile) throws JsonProcessingException {
         ObjectMapper objectMapper=new ObjectMapper();
-        PatientEntity patient=null;
-        patient=objectMapper.readValue(patientString,PatientEntity.class);
+        PatientEntity patient=objectMapper.readValue(patientString,PatientEntity.class);
         Response response = authService.RegisterPatient(patient,imageFile);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
