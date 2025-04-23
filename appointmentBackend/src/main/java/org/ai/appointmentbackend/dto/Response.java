@@ -25,9 +25,12 @@ public class Response {
     private PatientDto patientDto;
     private UserDto userDto;
     private List<PatientDto>patientDtos;
+    private List<AdminDto>adminDtos;
     private List<DoctorDto>doctorDtos;
     private List<AppointmentDto>appointmentDtos;
     private DashboardData dashboardData;
+    private Object data;
+
 
     public Object getData() {
         return data;
@@ -37,13 +40,14 @@ public class Response {
         this.data = data;
     }
 
-    private Object data;
 
+    public List<AdminDto> getAdminDtos() {
+        return adminDtos;
+    }
 
-
-
-
-
+    public void setAdminDtos(List<AdminDto> adminDtos) {
+        this.adminDtos = adminDtos;
+    }
 
     public DoctorDashboard getDoctorDashboard() {
         return doctorDashboard;

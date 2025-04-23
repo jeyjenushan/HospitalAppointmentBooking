@@ -26,13 +26,65 @@ public  class  DtoConverter {
             userDto.setImage(Base64.getDecoder().decode(base64Image)); // Store base64 in the DTO for frontend rendering
         }
 
-
         return userDto;
     }
 
     public static List<UserDto> convertUserEntityListToUserDtoList(List<UserEntity> UserEntityList) {
         return UserEntityList.stream().map(DtoConverter::convertUserEntityToUserDto).collect(Collectors.toList());
     }
+    public static DoctorDto convertDoctorEntityToDoctorDto(DoctorEntity savedDoctor) {
+        if (savedDoctor == null) return null;
+
+        DoctorDto dto = new DoctorDto();
+        // Set primitive fields
+        dto.setId(savedDoctor.getId());
+        dto.setSpecialization(savedDoctor.getSpecialization());
+        dto.setContactNumber(savedDoctor.getContactNumber());
+        dto.setAvailability(savedDoctor.getAvailability());
+        dto.setExperience(savedDoctor.getExperience());
+        dto.setDegree(savedDoctor.getDegree());
+        dto.setFees(savedDoctor.getFees());
+        dto.setAboutDoctor(savedDoctor.getAboutDoctor());
+
+
+
+        // Convert User (only basic info)
+        if (savedDoctor.getUser() != null) {
+            dto.setUser(convertUserEntityToUserDto(savedDoctor.getUser()));
+
+        }
+
+        // Only extract slot dates - doesn't trigger full map loading
+      if(savedDoctor.getSlotsBooked() != null) {
+          dto.setSlots_booked(savedDoctor.getSlotsBooked());
+      }
+
+
+
+        return dto;
+    }
+
+    public static List<DoctorDto> convertDoctorEntityListToDoctorDtoList(List<DoctorEntity> doctorEntityList) {
+        return doctorEntityList.stream().map(DtoConverter::convertDoctorEntityToDoctorDto).collect(Collectors.toList());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public static PatientDto convertPatientEntityToPatientDto(PatientEntity patientEntity) {
 
@@ -62,36 +114,7 @@ public  class  DtoConverter {
 
 
 
-    public static DoctorDto convertDoctorEntityToDoctorDto(DoctorEntity savedDoctor) {
-        if (savedDoctor == null) {
-            return null;
-        }
 
-        DoctorDto doctorDto = new DoctorDto();
-        doctorDto.setId(savedDoctor.getId());
-        doctorDto.setSpecialization(savedDoctor.getSpecialization());
-        doctorDto.setContactNumber(savedDoctor.getContactNumber());
-        doctorDto.setAvailability(savedDoctor.getAvailability());
-        doctorDto.setExperience(savedDoctor.getExperience());
-        doctorDto.setAboutDoctor(savedDoctor.getAboutDoctor());
-        doctorDto.setAddress1(savedDoctor.getAddress1());
-        doctorDto.setDegree(savedDoctor.getDegree());
-        doctorDto.setFees(savedDoctor.getFees());
-
-        if (savedDoctor.getUser() != null) {
-       UserEntity userEntity = savedDoctor.getUser();
-       UserDto userDto = convertUserEntityToUserDto(userEntity);
-       doctorDto.setUser(userDto);
-        }
-
-
-
-        return doctorDto;
-    }
-
-    public static List<DoctorDto> convertDoctorEntityListToDoctorDtoList(List<DoctorEntity> doctorEntityList) {
-        return doctorEntityList.stream().map(DtoConverter::convertDoctorEntityToDoctorDto).collect(Collectors.toList());
-    }
 
 
 

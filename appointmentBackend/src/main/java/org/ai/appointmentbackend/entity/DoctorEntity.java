@@ -1,5 +1,6 @@
 package org.ai.appointmentbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,10 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "doctors")
@@ -26,16 +24,6 @@ public class DoctorEntity {
     private String availability="unavailable";
     private String experience;
     private String Degree;
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(
-            name = "slots_booked",
-            joinColumns = @JoinColumn(name = "doctor_id")
-    )
-    @MapKeyColumn(name = "slot_date") // Date key like "day_month_year"
-    @Column(name = "slot_time") // Slot time, e.g., "10:00"
-    private Map<String, Set<String>> slotsBooked;
-
     private Long fees;
     private String aboutDoctor;
 
@@ -47,8 +35,24 @@ public class DoctorEntity {
 
 
 
-    @OneToMany(mappedBy = "doctor",cascade = CascadeType.ALL)
-    private List<AppointmentEntity> appointments=new ArrayList<>();
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<AppointmentEntity> appointments = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "slots_booked", joinColumns = @JoinColumn(name = "doctor_id"))
+    @MapKeyColumn(name = "slot_date")
+    @Column(name = "slot_time")
+    @JsonIgnore
+    private Map<String, Set<String>> slotsBooked = new HashMap<>();
+
+
+    @Transient
+    public Map<String, Set<String>> getSlotsForFrontend() {
+        return slotsBooked != null ?
+                Collections.unmodifiableMap(slotsBooked) :
+                Collections.emptyMap();
+    }
 
 
 

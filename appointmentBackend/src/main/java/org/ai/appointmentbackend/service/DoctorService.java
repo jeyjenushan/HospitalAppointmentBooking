@@ -3,15 +3,21 @@ package org.ai.appointmentbackend.service;
 import org.ai.appointmentbackend.dto.Response;
 import org.ai.appointmentbackend.entity.DoctorEntity;
 
-public interface DoctorService {
+import java.util.Map;
+import java.util.Set;
 
-    Response fetchAllDoctors();
-    Response fetchDoctorById(Long id);
-    Response updateDoctor(String email, DoctorEntity doctorEntity);
+public interface DoctorService {
     Response deleteDoctor(Long doctorId);
+    Response fetchAllDoctors();
+
+    Response updateDoctor(String email, DoctorEntity doctorEntity);
     Response getDoctorsBySpecialization(String specialization);
+    Response getDoctorAppointments(Long doctorId);
     Response checkDoctorAvailability(Long doctorId);
     Response changeDoctorAvailability(Long doctorId);
 
-    Response getDoctorById(Long id);
+    Response isAuthHeader(String authHeader);
+
+    Response fetchDoctorById(Long doctorId);
+
 }
