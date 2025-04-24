@@ -97,6 +97,8 @@ public  class  DtoConverter {
             UserDto userDto = convertUserEntityToUserDto(userEntity);
             patientDto.setUser(userDto);
         }
+         patientDto.setDob(patientEntity.getDob());
+        patientDto.setAddress(patientEntity.getAddress());
 
         patientDto.setContactNumber(String.valueOf(patientEntity.getContactNumber()));
         patientDto.setMedicalHistory(patientEntity.getMedicalHistory());

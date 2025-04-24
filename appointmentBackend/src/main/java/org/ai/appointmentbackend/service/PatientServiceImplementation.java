@@ -109,6 +109,9 @@ public class PatientServiceImplementation implements PatientService{
             if (updatedPatient.getMedicalHistory() != null) {
                 existingPatient.setMedicalHistory(updatedPatient.getMedicalHistory().trim());
             }
+            if(updatedPatient.getDob() != null) {
+                existingPatient.setDob(updatedPatient.getDob().trim());
+            }
             if(updatedPatient.getUser()!=null) {
                 UserEntity existingUser = existingPatient.getUser();
                 UserEntity updatedUser = updatedPatient.getUser();

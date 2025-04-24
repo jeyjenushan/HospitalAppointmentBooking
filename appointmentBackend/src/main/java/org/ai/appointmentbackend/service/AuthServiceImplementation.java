@@ -1,7 +1,6 @@
 package org.ai.appointmentbackend.service;
 
 import jakarta.mail.MessagingException;
-import lombok.AllArgsConstructor;
 import org.ai.appointmentbackend.configuration.JwtTokenProvider;
 import org.ai.appointmentbackend.dto.Response;
 import org.ai.appointmentbackend.dto.UserDto;
@@ -21,10 +20,16 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Service
-
 public class AuthServiceImplementation implements AuthService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final PatientRepository patientRepository;
+    private final DoctorRepository doctorRepository;
+    private final AdminRepository adminRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final EmailService emailService;
+    private final AuthenticationManager authenticationManager;
 
     public AuthServiceImplementation(UserRepository userRepository, PasswordEncoder passwordEncoder, PatientRepository patientRepository, DoctorRepository doctorRepository, AdminRepository adminRepository, JwtTokenProvider jwtTokenProvider, EmailService emailService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
@@ -37,16 +42,8 @@ public class AuthServiceImplementation implements AuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    private final PasswordEncoder passwordEncoder;
-    private final PatientRepository patientRepository;
-    private final DoctorRepository doctorRepository;
 
-    private final AdminRepository adminRepository;
-
-    private final JwtTokenProvider jwtTokenProvider;
-    private final EmailService emailService;
-    private final AuthenticationManager authenticationManager;
-
+//REGISTER PATIENT
     @Override
     public Response RegisterPatient(PatientEntity patient,MultipartFile imageFile) {
         try {
@@ -58,6 +55,7 @@ public class AuthServiceImplementation implements AuthService {
                 savedPatient.setAddress(patient.getAddress());
                 savedPatient.setContactNumber(patient.getContactNumber());
                 savedPatient.setMedicalHistory(patient.getMedicalHistory());
+                savedPatient.setDob(patient.getDob());
                 savedPatient = patientRepository.save(savedPatient);
 
                 return buildSuccessResponse(savedPatient, jwtTokenProvider.generateToken(user), "Patient");
@@ -66,6 +64,11 @@ public class AuthServiceImplementation implements AuthService {
             return buildErrorResponse("Registration failed: " + e.getMessage(), 500);
         }
     }
+
+
+
+
+
 
     @Override
     public Response RegisterDoctor(DoctorEntity doctor,MultipartFile imageFile) {
@@ -132,7 +135,7 @@ public class AuthServiceImplementation implements AuthService {
         try {
             UserEntity existingUser = userRepository.findByEmail(userEntity.getEmail());
             if (existingUser != null) {
-                return buildErrorResponse("User already exists with the provided email.", 400);
+                return buildErrorResponse("User already registered with email please go to Login page.", 400);
             }
 
             UserEntity newUserEntity = saveUserEntity(userEntity, role, imageFile);
@@ -199,6 +202,11 @@ public class AuthServiceImplementation implements AuthService {
         return response;
     }
 
+
+
+
+
+    //Login User
     @Override
     public Response LoginUser(LoginRequest loginRequest) {
         Response response = new Response();

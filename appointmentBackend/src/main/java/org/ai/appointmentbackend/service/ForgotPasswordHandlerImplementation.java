@@ -1,6 +1,5 @@
 package org.ai.appointmentbackend.service;
 
-import lombok.AllArgsConstructor;
 import org.ai.appointmentbackend.dto.Response;
 import org.ai.appointmentbackend.entity.ForgotPasswordToken;
 import org.ai.appointmentbackend.entity.UserEntity;
@@ -16,19 +15,18 @@ import java.util.UUID;
 public class ForgotPasswordHandlerImplementation implements ForgotPasswordHandlerService {
 
 private final UserRepository userRepository;
-private final ForgotPasswordRepository forgotPasswordRepository;
-private final ForgotPasswordService forgotPasswordService;
+    private final ForgotPasswordService forgotPasswordService;
 private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     public ForgotPasswordHandlerImplementation(UserRepository userRepository, ForgotPasswordRepository forgotPasswordRepository, ForgotPasswordService forgotPasswordService, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.forgotPasswordRepository = forgotPasswordRepository;
         this.forgotPasswordService = forgotPasswordService;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
     }
 
-    private final PasswordEncoder passwordEncoder;
+
 
 
 

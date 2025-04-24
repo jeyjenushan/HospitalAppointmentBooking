@@ -29,6 +29,8 @@ public class PatientEntity {
       private String address;
       private String medicalHistory;
 
+      private String dob;
+
       @CreationTimestamp
       @Column(updatable = false)
       private LocalDateTime createdAt;
@@ -36,10 +38,18 @@ public class PatientEntity {
       @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
       private List<AppointmentEntity> appointments=new ArrayList<>();
 
-
       @OneToOne
       @JoinColumn(name = "user_id",referencedColumnName = "id")
       private UserEntity user;
+
+
+      public String getDob() {
+            return dob;
+      }
+
+      public void setDob(String dob) {
+            this.dob = dob;
+      }
 
       public Long getId() {
             return id;

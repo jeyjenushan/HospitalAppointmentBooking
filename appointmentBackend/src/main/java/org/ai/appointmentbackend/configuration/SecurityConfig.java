@@ -35,14 +35,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         // Public endpoints
-                        .requestMatchers(HttpMethod.POST, "/api/auth/register-patient").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/doctors/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/departments").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/departments/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
-
-
                         .requestMatchers(
                                 "/api/login",
                                 "/api/auth/patient",
@@ -51,6 +43,18 @@ public class SecurityConfig {
                                 "/api/forgotpassword/reset-password"
 
                         ).permitAll()
+
+                        //1st one sometimes delete one
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register-patient").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/doctors/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/departments").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/departments/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
+
+
+
                         // Patient-specific endpoints
 
                         .requestMatchers(HttpMethod.PUT, "/api/patients/{id}").hasAnyRole("PATIENT", "ADMIN")
@@ -73,7 +77,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/doctors/patientappointments/**").hasRole("PATIENT")
                         // Admin-only endpoints
                         .requestMatchers(HttpMethod.PUT,"/api/doctors/{doctorId}/availability").hasAnyRole("DOCTOR", "ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").permitAll()
                         .requestMatchers(HttpMethod.PUT,"/api/doctors/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/patients/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/patients").hasRole("ADMIN")

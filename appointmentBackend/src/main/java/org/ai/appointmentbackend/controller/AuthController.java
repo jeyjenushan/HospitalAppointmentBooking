@@ -23,6 +23,7 @@ public class AuthController {
         this.forgotPasswordHandlerService = forgotPasswordHandlerService;
     }
 
+
     @PostMapping("/login")
     public ResponseEntity<Response> login(@RequestBody LoginRequest loginRequest){
         Response response=authService.LoginUser(loginRequest);
@@ -32,6 +33,7 @@ public class AuthController {
     public ResponseEntity<Response> patientRegister(@RequestPart("patient") String patientString,  @RequestPart(value = "image", required = false) MultipartFile imageFile) throws JsonProcessingException {
         ObjectMapper objectMapper=new ObjectMapper();
         PatientEntity patient=objectMapper.readValue(patientString,PatientEntity.class);
+        System.out.println(patient);
         Response response = authService.RegisterPatient(patient,imageFile);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }

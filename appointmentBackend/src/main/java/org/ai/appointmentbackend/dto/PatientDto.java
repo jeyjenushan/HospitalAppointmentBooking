@@ -1,9 +1,11 @@
 package org.ai.appointmentbackend.dto;
 
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,10 +15,31 @@ public class PatientDto {
     private Long id;
     private int age;
     private String gender;
+    private String address;
+
+
+    private String dob;
     private String contactNumber;
     private String medicalHistory;
     private UserDto user;
     private LocalDateTime createdAt;
+
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
 
     public Long getId() {
         return id;
