@@ -1,15 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
-import axios from "axios";
-import { toast } from "react-toastify";
-import { assets } from "../assets/assets";
+
+import { AppContext } from "../../context/AppContext";
+import { assets } from "../../assets/assets";
 
 const MyAppointments = () => {
-  const { backendUrl, token, patientId } = useContext(AppContext);
-  const navigate = useNavigate();
-
-  const [appointments, setAppointments] = useState([]);
+  const {
+    appointments,
+    getUserAppointments,
+    cancelAppointment,
+    appointmentStripe,
+    setAppointments,
+    token,
+  } = useContext(AppContext);
   const [payment, setPayment] = useState("");
 
   const months = [
@@ -35,80 +37,9 @@ const MyAppointments = () => {
     });
   };
 
-  // Getting User Appointments Data Using API
-  const getUserAppointments = async () => {
-    try {
-      const { data } = await axios.get(
-        backendUrl + `/api/patients/${patientId}/appointments`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setAppointments(data.appointmentDtos.reverse());
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message);
-    }
-  };
-
-  // Function to cancel appointment Using API
-  const cancelAppointment = async (appointmentId) => {
-    try {
-      const { data } = await axios.post(
-        backendUrl + `/api/appointments/${appointmentId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (data.statusCode == 200) {
-        toast.success(data.message);
-        getUserAppointments();
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message);
-    }
-  };
-
-  // Function to make payment using stripe
-  const appointmentStripe = async (appointmentId) => {
-    try {
-      const { data } = await axios.post(
-        backendUrl + "/api/pay", // updated path based on Spring Boot backend
-        { appointmentId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // if you're using JWT or auth token (optional based on your backend)
-          },
-        }
-      );
-
-      console.log("The data is : " + data.statusCode);
-      if (data.statusCode == 200) {
-        const { session_url } = data.data;
-        window.location.replace(session_url); // redirect to Stripe Checkout
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response?.data?.message || error.message);
-    }
-  };
-
   useEffect(() => {
-    if (token) {
-      getUserAppointments();
-    }
-  }, [token]);
+    getUserAppointments();
+  }, [token, getUserAppointments]);
 
   return (
     <div>

@@ -11,15 +11,12 @@ import Contact from "./pages/Contact/Contact";
 import Home from "./pages/Home/Home";
 import Navbar from "./components/Common/Navbar";
 import Footer from "./components/Common/Footer";
-
-import Doctors from "./pages/Doctors";
-
-import Appointment from "./pages/Appointment";
-import MyAppointments from "./pages/MyAppointments";
-
-import Verify from "./pages/Verify";
-
+import Doctors from "./pages/Doctors/Doctors";
+import MyAppointments from "./pages/Appointments/MyAppointments";
+import Appointment from "./pages/Appointments/Appointment";
+import Verify from "./pages/payment/Verify";
 import MyProfile from "./pages/UserProfile/MyProfile";
+
 
 const App = () => {
   const location = useLocation();
@@ -54,10 +51,10 @@ const App = () => {
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-
-          <Route path="/" element={<Home />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/doctors/:specialization" element={<Doctors />} />
+          <Route path="/" element={<Home />} />
+       
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoutes />}>

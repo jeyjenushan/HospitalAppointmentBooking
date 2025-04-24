@@ -1,26 +1,39 @@
 import { createContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { toast }                 from "react-toastify";
+import axios                     from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
+  // Constants
   const currencySymbol = "$";
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
-  const [userData, setUserData] = useState(null);
-  const [docInfo, setDocInfo] = useState(null);
-  const [doctors, setDoctors] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const [patientId, setPatientId] = useState(
+  const backendUrl     = import.meta.env.VITE_BACKEND_URL;
+
+  // State variables
+  const [userData,     setUserData]     = useState(null);
+  const [docInfo,      setDocInfo]      = useState(null);
+  const [doctors,      setDoctors]      = useState([]);
+  const [loading,      setLoading]      = useState(false);
+  const [appointments, setAppointments] = useState([]);
+  const [patientId,    setPatientId]    = useState(
     localStorage.getItem("patientId") ? localStorage.getItem("patientId") : ""
   );
-  const [token, setToken] = useState(
+  const [token,        setToken]        = useState(
     localStorage.getItem("token") ? localStorage.getItem("token") : ""
   );
 
-  //REGISTER PATIENT
+  // Hooks
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // ===================== AUTHENTICATION FUNCTIONS =====================
+
+  /**
+   * Register a new patient
+   * @param {Object} formDataToSend - Patient registration data
+   * @param {File} image - Patient profile image
+   */
   const registerPatient = async (formDataToSend, image) => {
     setLoading(true);
     try {
@@ -44,7 +57,11 @@ const AppContextProvider = (props) => {
     }
   };
 
-  //LOGIN PATIENT
+  /**
+   * Login an existing patient
+   * @param {Object} formDataToSend - Login credentials
+   * @param {boolean} remember - Remember user credentials
+   */
   const loginPatient = async (formDataToSend, remember) => {
     setLoading(true);
     try {
@@ -81,25 +98,28 @@ const AppContextProvider = (props) => {
     }
   };
 
-  //SEND OTP
+  // ===================== PASSWORD RECOVERY FUNCTIONS =====================
+
+  /**
+   * Send OTP to user's email for password recovery
+   * @param {string} email - User's email address
+   * @returns {boolean} - Success status
+   */
   const sendOtp = async (email) => {
     try {
       const { data } = await axios.post(
         `${backendUrl}/api/forgotpassword/send-otp`,
         {},
-        {
-          params: { email },
-        }
+        { params: { email } }
       );
       if (data.statusCode == 200) {
         toast.success(data.message);
         return true;
       } else {
-        toast.error(data.message || "Failed to send otp your email"); // Display error if doctorDtos is missing
+        toast.error(data.message || "Failed to send otp your email");
         return false;
       }
     } catch (error) {
-      // Log error for debugging and show error message to the user
       console.error(error);
       toast.error(
         error.response?.data?.message ||
@@ -109,41 +129,18 @@ const AppContextProvider = (props) => {
     }
   };
 
-  //VERIFY OTP
+  /**
+   * Verify OTP entered by user
+   * @param {string} email - User's email address
+   * @param {string} otp - OTP code
+   * @returns {boolean} - Verification status
+   */
   const verifyOtp = async (email, otp) => {
     try {
       const { data } = await axios.post(
         `${backendUrl}/api/forgotpassword/verify-otp`,
         {},
-        {
-          params: { email, otp },
-        }
-      );
-      if (data.statusCode == 200) {
-        toast.success(data.message);
-        return true;
-      } else {
-        toast.error(data.message || "Wrong OTP provided"); // Display error if doctorDtos is missing
-        return false;
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        error.response?.data?.message || "An error occurred verify  otp"
-      );
-      return false;
-    }
-  };
-
-  //RESET PASSWORD
-  const resetPassword = async (email, otp, newPassword) => {
-    try {
-      const { data } = await axios.post(
-        `${backendUrl}/api/forgotpassword/reset-password`,
-        {},
-        {
-          params: { email, newPassword, otp },
-        }
+        { params: { email, otp } }
       );
       if (data.statusCode == 200) {
         toast.success(data.message);
@@ -151,7 +148,34 @@ const AppContextProvider = (props) => {
       } else {
         toast.error(data.message || "Wrong OTP provided");
         return false;
-        // Display error if doctorDtos is missing
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "An error occurred verify otp");
+      return false;
+    }
+  };
+
+  /**
+   * Reset user password
+   * @param {string} email - User's email address
+   * @param {string} otp - Verified OTP code
+   * @param {string} newPassword - New password
+   * @returns {boolean} - Success status
+   */
+  const resetPassword = async (email, otp, newPassword) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/forgotpassword/reset-password`,
+        {},
+        { params: { email, newPassword, otp } }
+      );
+      if (data.statusCode == 200) {
+        toast.success(data.message);
+        return true;
+      } else {
+        toast.error(data.message || "Wrong OTP provided");
+        return false;
       }
     } catch (error) {
       console.error(error);
@@ -160,16 +184,16 @@ const AppContextProvider = (props) => {
     }
   };
 
-  // Getting User Profile using API
+  // ===================== USER PROFILE FUNCTIONS =====================
+
+  /**
+   * Load user profile data from backend
+   */
   const loadUserProfileData = async () => {
     try {
       const { data } = await axios.get(
         backendUrl + `/api/patients/${patientId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (data.statusCode == 200) {
@@ -183,36 +207,49 @@ const AppContextProvider = (props) => {
     }
   };
 
-  useEffect(() => {
-    if (token) {
-      loadUserProfileData();
-    }
-  }, [token]);
+  // ===================== DOCTOR FUNCTIONS =====================
 
-  // Getting Doctors using API
+  /**
+   * Fetch all doctors data from backend
+   */
   const getDoctosData = async () => {
+    setLoading(true);
     try {
       const { data } = await axios.get(backendUrl + "/api/doctors");
-      if (data.statusCode == 200) {
-        setDoctors(data.doctorDtos);
+
+      if (data.statusCode === 200) {
+        if (data.doctorDtos && data.doctorDtos.length > 0) {
+          setDoctors(data.doctorDtos);
+        } else {
+          setDoctors([]);
+          toast.info("No doctors available at the moment.");
+        }
       } else {
-        toast.error(data.message);
+        toast.error(data.message || "Failed to fetch doctors data");
+        setDoctors([]);
       }
     } catch (error) {
-      console.log(error);
-      toast.error(error.message);
+      console.error("Error fetching doctors:", error);
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to load doctors. Please try again later."
+      );
+      setDoctors([]);
+    } finally {
+      setLoading(false);
     }
   };
 
+  /**
+   * Fetch specific doctor's information
+   * @param {string} docId - Doctor ID
+   */
   const fetchDocInfo = async (docId) => {
     try {
       const { data } = await axios.get(
         `${backendUrl}/api/doctors/getDoctor/${docId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (data.statusCode == 200) {
@@ -226,24 +263,183 @@ const AppContextProvider = (props) => {
     }
   };
 
-  /*
-  useEffect(() => {
-    getDoctosData();
-  }, []);*/
-  /*
+  // ===================== APPOINTMENT FUNCTIONS =====================
 
-*/
+  /**
+   * Book a new appointment
+   * @param {Object} bookingData - Appointment details
+   */
+  const bookAppointment = async (bookingData) => {
+    try {
+      const { data } = await axios.post(
+        backendUrl + "/api/appointments",
+        bookingData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (data.statusCode == 200) {
+        toast.success(data.message);
+        getDoctosData();
+        navigate("/my-appointments");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.status === 403) {
+        toast.error("You are not authorized to book this appointment.");
+      } else {
+        toast.error(error.message || "An error occurred.");
+      }
+    }
+  };
+
+  /**
+   * Fetch user's appointments
+   */
+  const getUserAppointments = async () => {
+    try {
+      const { data } = await axios.get(
+        backendUrl + `/api/patients/${patientId}/appointments`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAppointments(data.appointmentDtos.reverse());
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  /**
+   * Cancel an existing appointment
+   * @param {string} appointmentId - ID of appointment to cancel
+   */
+  const cancelAppointment = async (appointmentId) => {
+    try {
+      const { data } = await axios.post(
+        backendUrl + `/api/appointments/${appointmentId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.statusCode == 200) {
+        toast.success(data.message);
+        getUserAppointments();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  // ===================== PAYMENT FUNCTIONS =====================
+
+  /**
+   * Initiate Stripe payment for appointment
+   * @param {string} appointmentId - ID of appointment to pay for
+   */
+  const appointmentStripe = async (appointmentId) => {
+    try {
+      const { data } = await axios.post(
+        backendUrl + "/api/pay",
+        { appointmentId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log("The data is : " + data.statusCode);
+      if (data.statusCode == 200) {
+        const { session_url } = data.data;
+        window.location.replace(session_url);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
+
+  /**
+   * Verify Stripe payment status
+   * @param {boolean} success - Payment success status
+   * @param {string} appointmentId - ID of appointment
+   */
+  const verifyStripe = async (success, appointmentId) => {
+    try {
+      const { data } = await axios.post(
+        backendUrl + "/api/verify",
+        { success, appointmentId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.statusCode == 200) {
+        toast.success(data.message);
+        navigate("/my-appointments");
+        console.log("appointments" + data.appointmentDto);
+      } else {
+        toast.error(data.message);
+        console.log(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error);
+    }
+  };
+
+  // ===================== EFFECT HOOKS =====================
+
+  useEffect(() => {
+    // Skip auth-related effects on auth pages
+    const isAuthPage = ["/login", "/register", "/forgotpassword"].some((path) =>
+      location.pathname.includes(path)
+    );
+
+    if (token && !isAuthPage) {
+      loadUserProfileData();
+    }
+  }, [token, location.pathname]);
+
+  useEffect(() => {
+    // Skip doctor loading on auth pages
+    const isAuthPage = ["/login", "/register", "/forgotpassword"].some((path) =>
+      location.pathname.includes(path)
+    );
+
+    if (!isAuthPage) {
+      getDoctosData();
+    }
+  }, [location.pathname]);
+
+  // ===================== CONTEXT VALUE =====================
+
   const value = {
+    // Authentication
     registerPatient,
     loginPatient,
     sendOtp,
     verifyOtp,
     resetPassword,
-
     
-
+    // Doctors
     doctors,
     getDoctosData,
+    docInfo,
+    setDocInfo,
+    fetchDocInfo,
+    
+    // Appointments
+    bookAppointment,
+    getUserAppointments,
+    cancelAppointment,
+    appointments,
+    
+    // Payments
+    appointmentStripe,
+    verifyStripe,
+    
+    // State
+    loading,
     currencySymbol,
     backendUrl,
     token,
@@ -253,9 +449,6 @@ const AppContextProvider = (props) => {
     loadUserProfileData,
     setPatientId,
     patientId,
-    docInfo,
-    setDocInfo,
-    fetchDocInfo,
   };
 
   return (
