@@ -1,5 +1,5 @@
 import React from "react";
-import { specializationData } from "../assets/assets";
+import { specializationData } from "../../assets/assets";
 import { Link } from "react-router-dom";
 
 const specializationMenu = () => {

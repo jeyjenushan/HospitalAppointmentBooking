@@ -5,90 +5,107 @@ import { toast } from "react-toastify";
 export const AdminContext = createContext();
 
 const AdminContextProvider = (props) => {
-  const [aToken, setAToken] = useState(
-    localStorage.getItem("aToken") ? localStorage.getItem("aToken") : ""
-  );
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
   const [adminId, setAdminId] = useState(0);
   const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [dashData, setDashData] = useState(null);
   const [admins, setAdmins] = useState([]);
+  const [aToken, setAToken] = useState(
+    localStorage.getItem("aToken") ? localStorage.getItem("aToken") : ""
+  );
 
-  const sendOtp = async (email) => {
+  //ADD ADMIN
+  const registerAdmin = async (adminData, adminImage) => {
     try {
+      if (!adminImage) {
+        throw new Error("Image Not Selected");
+      }
+
+      const adminObj = {
+        user: {
+          name: adminData.name,
+          email: adminData.email,
+          password: adminData.password,
+        },
+      };
+
+      const formData = new FormData();
+      formData.append("admin", JSON.stringify(adminObj));
+      formData.append("image", adminImage);
+
       const { data } = await axios.post(
-        `${backendUrl}/api/forgotpassword/send-otp`,
-        {},
+        `${backendUrl}/api/admin/register/admin`,
+        formData,
         {
-          params: { email },
+          headers: {
+            Authorization: `Bearer ${aToken}`,
+          },
         }
       );
-      if (data.statusCode == 200) {
+
+      if (data.statusCode === 200) {
         toast.success(data.message);
-        return true;
+        return { success: true };
       } else {
-        toast.error(data.message || "Failed to send otp your email"); // Display error if doctorDtos is missing
-        return false;
+        throw new Error(data.message);
       }
     } catch (error) {
-      // Log error for debugging and show error message to the user
-      console.error(error);
-      toast.error(
-        error.response?.data?.message ||
-          "An error occurred while sending email to the user"
-      );
-      return false;
+      toast.error(error.response?.data?.message || error.message);
+      console.error("Admin registration error:", error);
+      return { success: false, error: error.message };
     }
   };
 
-  const verifyOtp = async (email, otp) => {
+  //ADD DOCTOR
+  const registerDoctor = async (doctorData, doctorImage) => {
     try {
-      const { data } = await axios.post(
-        `${backendUrl}/api/forgotpassword/verify-otp`,
-        {},
-        {
-          params: { email, otp },
-        }
-      );
-      if (data.statusCode == 200) {
-        toast.success(data.message);
-        return true;
-      } else {
-        toast.error(data.message || "Wrong OTP provided"); // Display error if doctorDtos is missing
-        return false;
+      if (!doctorImage) {
+        throw new Error("Image Not Selected");
       }
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        error.response?.data?.message || "An error occurred verify  otp"
-      );
-      return false;
-    }
-  };
 
-  const resetPassword = async (email, otp, newPassword) => {
-    try {
+      const doctorObj = {
+        specialization: doctorData.speciality,
+        contactNumber: doctorData.contactNumber,
+        experience: doctorData.experience,
+        degree: doctorData.degree,
+        fees: Number(doctorData.fees),
+        aboutDoctor: doctorData.about,
+        address1: {
+          line1: doctorData.address1,
+          line2: doctorData.address2,
+        },
+        user: {
+          name: doctorData.name,
+          email: doctorData.email,
+          password: doctorData.password,
+        },
+      };
+
+      const formData = new FormData();
+      formData.append("doctor", JSON.stringify(doctorObj));
+      formData.append("image", doctorImage);
+
       const { data } = await axios.post(
-        `${backendUrl}/api/forgotpassword/reset-password`,
-        {},
+        `${backendUrl}/api/admin/register/doctor`,
+        formData,
         {
-          params: { email, newPassword, otp },
+          headers: {
+            Authorization: `Bearer ${aToken}`,
+          },
         }
       );
-      if (data.statusCode == 200) {
+
+      if (data.statusCode === 200) {
         toast.success(data.message);
-        return true;
+        return { success: true };
       } else {
-        toast.error(data.message || "Wrong OTP provided");
-        return false;
-        // Display error if doctorDtos is missing
+        throw new Error(data.message);
       }
     } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Error resetting password");
-      return false;
+      toast.error(error.response?.data?.message || error.message);
+      console.error("Doctor registration error:", error);
+      return { success: false, error: error.message };
     }
   };
 
@@ -234,10 +251,13 @@ const AdminContextProvider = (props) => {
   };
 
   const value = {
+    registerDoctor,
+    registerAdmin,
     adminId,
     setAdminId,
     aToken,
     setAToken,
+
     doctors,
     getAllDoctors,
     changeAvailability,
@@ -248,9 +268,6 @@ const AdminContextProvider = (props) => {
     dashData,
     admins,
     getAllAdmins,
-    sendOtp,
-    verifyOtp,
-    resetPassword,
   };
 
   return (

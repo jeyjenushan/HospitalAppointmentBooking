@@ -1,22 +1,25 @@
 import React, { useContext, useMemo } from "react";
-import Navbar from "./components/Navbar";
-import { Routes, Route, Navigate, useLocation, Outlet } from "react-router-dom";
-import Home from "./pages/Home";
-import Doctors from "./pages/Doctors";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Appointment from "./pages/Appointment";
-import MyAppointments from "./pages/MyAppointments";
-import MyProfile from "./pages/MyProfile";
-import Footer from "./components/Footer";
-import Verify from "./pages/Verify";
-import ForgotPassword from "./pages/ForgotPassword";
-
-import { AppContext } from "./context/AppContext";
-import Register from "./pages/Register/Register";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Routes, Route, Navigate, useLocation, Outlet } from "react-router-dom";
+import { AppContext } from "./context/AppContext";
+import Register from "./pages/Register/Register";
 import Login from "./pages/Login/Login";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+import About from "./pages/About/About";
+import Contact from "./pages/Contact/Contact";
+import Home from "./pages/Home/Home";
+import Navbar from "./components/Common/Navbar";
+import Footer from "./components/Common/Footer";
+
+import Doctors from "./pages/Doctors";
+
+import Appointment from "./pages/Appointment";
+import MyAppointments from "./pages/MyAppointments";
+
+import Verify from "./pages/Verify";
+
+import MyProfile from "./pages/UserProfile/MyProfile";
 
 const App = () => {
   const location = useLocation();
@@ -48,16 +51,13 @@ const App = () => {
           {/* Public Routes */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-
-          
+          <Route path="/forgotPassword" element={<ForgotPassword />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
 
           <Route path="/" element={<Home />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/doctors/:specialization" element={<Doctors />} />
-
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/forgotPassword" element={<ForgotPassword />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoutes />}>

@@ -1,9 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 
-
 export const useLogin = () => {
-  const { loginPatient } = useContext(AppContext);
+  const { login } = useContext(AppContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -31,7 +30,7 @@ export const useLogin = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    await loginPatient(formData, remember);
+    await login(formData, remember);
   };
 
   return {

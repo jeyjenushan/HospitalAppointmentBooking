@@ -12,6 +12,7 @@ export const useRegister = () => {
     contactNumber: "",
     address: "",
     medicalHistory: "",
+    dob: "",
   });
   const [image, setImage] = useState(null);
 
@@ -33,12 +34,15 @@ export const useRegister = () => {
       contactNumber: formData.contactNumber,
       address: formData.address,
       medicalHistory: formData.medicalHistory,
+      dob: String(formData.dob),
       user: {
         name: formData.name,
         email: formData.email,
         password: formData.password,
       },
     };
+
+    console.log(patientObj);
 
     const formDataToSend = new FormData();
     formDataToSend.append("patient", JSON.stringify(patientObj));

@@ -16,13 +16,13 @@ const RegisterForm = () => {
   return (
     <form
       onSubmit={onSubmitHandler}
-      className="bg-white p-8 rounded-lg shadow-md"
+      className="bg-white p-8 rounded-lg shadow-md max-w-4xl mx-auto"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left Column */}
         <div className="space-y-4">
-          <div>
-            <label className="block text-gray-700 mb-1">Full Name</label>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Full Name</label>
             <input
               name="name"
               onChange={handleChange}
@@ -33,8 +33,8 @@ const RegisterForm = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-gray-700 mb-1">Email</label>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Email</label>
             <input
               name="email"
               onChange={handleChange}
@@ -45,8 +45,8 @@ const RegisterForm = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-gray-700 mb-1">Password</label>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Password</label>
             <input
               name="password"
               onChange={handleChange}
@@ -57,14 +57,15 @@ const RegisterForm = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-gray-700 mb-1">Age</label>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Age</label>
             <input
               name="age"
               onChange={handleChange}
               value={formData.age}
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               type="number"
+              min="1"
               required
             />
           </div>
@@ -72,8 +73,8 @@ const RegisterForm = () => {
 
         {/* Right Column */}
         <div className="space-y-4">
-          <div>
-            <label className="block text-gray-700 mb-1">Gender</label>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Gender</label>
             <select
               name="gender"
               onChange={handleChange}
@@ -88,20 +89,20 @@ const RegisterForm = () => {
             </select>
           </div>
 
-          <div>
-            <label className="block text-gray-700 mb-1">Contact Number</label>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Contact Number</label>
             <input
               name="contactNumber"
               onChange={handleChange}
               value={formData.contactNumber}
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              type="text"
+              type="tel"
               required
             />
           </div>
 
-          <div>
-            <label className="block text-gray-700 mb-1">Address</label>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Address</label>
             <input
               name="address"
               onChange={handleChange}
@@ -112,8 +113,21 @@ const RegisterForm = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-gray-700 mb-1">Medical History</label>
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Date of Birth</label>
+            <input
+              name="dob"
+              onChange={handleChange}
+              value={formData.dob || ""}
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              type="date"
+              max={new Date().toISOString().split("T")[0]}
+              required
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-gray-700 mb-1">Medical History</label>
             <textarea
               name="medicalHistory"
               onChange={handleChange}
@@ -128,9 +142,9 @@ const RegisterForm = () => {
 
       {/* Profile Image Upload */}
       <div className="mt-6">
-        <label className="block text-gray-700 mb-1">Profile Image</label>
+        <label className="block text-gray-700 mb-2">Profile Image</label>
         <div className="flex items-center">
-          <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded border border-gray-300">
+          <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded border border-gray-300 transition-colors">
             Choose File
             <input
               type="file"
@@ -139,7 +153,7 @@ const RegisterForm = () => {
               accept="image/*"
             />
           </label>
-          <span className="ml-2 text-gray-500">
+          <span className="ml-3 text-gray-600">
             {image ? image.name : "No file chosen"}
           </span>
         </div>
@@ -149,7 +163,7 @@ const RegisterForm = () => {
       <div className="mt-8">
         <button
           type="submit"
-          className="w-full bg-primary hover:bg-blue-700 text-white py-2 px-4 rounded transition-colors flex justify-center items-center"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition-colors flex justify-center items-center"
           disabled={loading}
         >
           {loading ? (
@@ -165,6 +179,7 @@ const RegisterForm = () => {
           )}
         </button>
       </div>
+
       <AuthFooter
         text="Do you have an account?"
         linkText="Login here"

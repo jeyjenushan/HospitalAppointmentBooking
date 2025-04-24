@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
-import RelatedDoctors from "../components/RelatedDoctors";
+
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import RelatedDoctors from "../components/Appointments/RelatedDoctors";
 const Appointment = () => {
   const navigate = useNavigate();
   const { docId } = useParams();

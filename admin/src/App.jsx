@@ -1,12 +1,14 @@
 import React, { useContext } from "react";
 import "react-toastify/dist/ReactToastify.css";
-import Login from "./pages/Login";
 import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { DoctorContext } from "./context/DoctorContext";
 import { AdminContext } from "./context/AdminContext";
-import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
+import Login from "./pages/Login/Login";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+import Navbar from "./components/common/Navbar";
+import Sidebar from "./components/common/sidebar/Sidebar";
+
 import Dashboard from "./pages/Admin/Dashboard";
 import DoctorDashboard from "./pages/Doctor/DoctorDashboard";
 import AllAppointments from "./pages/Admin/AllAppointments";
@@ -16,9 +18,9 @@ import AddDoctor from "./pages/Admin/AddDoctor";
 
 import DoctorProfile from "./pages/Doctor/DoctorProfile";
 import DoctorAppointments from "./pages/Doctor/DoctorAppointments";
-import AddAdmin from "./pages/Admin/AddAdmin";
+
 import AdminList from "./pages/Admin/AdminList";
-import ForgotPassword from "./pages/ForgotPassword";
+import AddAdmin from "./pages/Admin/AddAdmin";
 
 const App = () => {
   const { dToken } = useContext(DoctorContext);

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { assets } from "../assets/assets";
-import { AppContext } from "../../../appointmentfrontend/src/context/AppContext";
+import { AppContext } from "../../context/AppContext";
 
 const MyProfile = () => {
   const { userData, setUserData, token, loadUserProfileData } =
@@ -59,7 +58,7 @@ const MyProfile = () => {
             ) : (
               <p className="text-blue-400">{userData.contactNumber}</p>
             )}
-            {/* <p className="font-medium">Address:</p>
+            <p className="font-medium">Address:</p>
             {isEdit ? (
               <p>
                 <input
@@ -68,29 +67,15 @@ const MyProfile = () => {
                   onChange={(e) =>
                     setUserData((prev) => ({
                       ...prev,
-                      address: { ...prev.address, line1: e.target.value },
+                      address: { ...prev.address, address: e.target.value },
                     }))
                   }
-                  value={userData.address.line1}
-                />
-                <br />
-                <input
-                  className="bg-gray-50"
-                  type="text"
-                  onChange={(e) =>
-                    setUserData((prev) => ({
-                      ...prev,
-                      address: { ...prev.address, line2: e.target.value },
-                    }))
-                  }
-                  value={userData.address.line2}
+                  value={userData.address}
                 />
               </p>
             ) : (
-              <p className="text-gray-500">
-                {userData.address.line1} <br /> {userData.address.line2}
-              </p>
-            )}*/}
+              <p className="text-gray-500">{userData.address}</p>
+            )}
           </div>
         </div>
         <div>
@@ -111,7 +96,7 @@ const MyProfile = () => {
             ) : (
               <p className="text-gray-400">{userData.gender}</p>
             )}
-            {/* <p className="font-medium">Birthday:</p>
+            <p className="font-medium">Birthday:</p>
             {isEdit ? (
               <input
                 className="max-w-28 bg-gray-100"
@@ -123,7 +108,7 @@ const MyProfile = () => {
               />
             ) : (
               <p className="text-gray-400">{userData.dob}</p>
-            )}*/}
+            )}
           </div>
         </div>
         <div className="mt-10">
