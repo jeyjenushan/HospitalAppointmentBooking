@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
-import { toast }                 from "react-toastify";
-import axios                     from "axios";
+import { toast } from "react-toastify";
+import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export const AppContext = createContext();
@@ -8,18 +8,18 @@ export const AppContext = createContext();
 const AppContextProvider = (props) => {
   // Constants
   const currencySymbol = "$";
-  const backendUrl     = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   // State variables
-  const [userData,     setUserData]     = useState(null);
-  const [docInfo,      setDocInfo]      = useState(null);
-  const [doctors,      setDoctors]      = useState([]);
-  const [loading,      setLoading]      = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [docInfo, setDocInfo] = useState(null);
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [appointments, setAppointments] = useState([]);
-  const [patientId,    setPatientId]    = useState(
+  const [patientId, setPatientId] = useState(
     localStorage.getItem("patientId") ? localStorage.getItem("patientId") : ""
   );
-  const [token,        setToken]        = useState(
+  const [token, setToken] = useState(
     localStorage.getItem("token") ? localStorage.getItem("token") : ""
   );
 
@@ -151,7 +151,9 @@ const AppContextProvider = (props) => {
       }
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || "An error occurred verify otp");
+      toast.error(
+        error.response?.data?.message || "An error occurred verify otp"
+      );
       return false;
     }
   };
@@ -204,6 +206,31 @@ const AppContextProvider = (props) => {
     } catch (error) {
       console.log(error);
       toast.error(error.message);
+    }
+  };
+
+  /**
+   * update user profile data from backend
+   */
+  const updateUserProfileData = async (updatedData) => {
+    setLoading(true);
+    try {
+      const { data } = await axios.put(
+        backendUrl + `/api/patients/${patientId}`,
+        updatedData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.statusCode == 200) {
+        setUserData(data.patientDto);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -420,24 +447,24 @@ const AppContextProvider = (props) => {
     sendOtp,
     verifyOtp,
     resetPassword,
-    
+
     // Doctors
     doctors,
     getDoctosData,
     docInfo,
     setDocInfo,
     fetchDocInfo,
-    
+
     // Appointments
     bookAppointment,
     getUserAppointments,
     cancelAppointment,
     appointments,
-    
+
     // Payments
     appointmentStripe,
     verifyStripe,
-    
+
     // State
     loading,
     currencySymbol,
@@ -447,6 +474,7 @@ const AppContextProvider = (props) => {
     userData,
     setUserData,
     loadUserProfileData,
+    updateUserProfileData,
     setPatientId,
     patientId,
   };

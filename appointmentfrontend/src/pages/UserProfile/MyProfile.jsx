@@ -2,8 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 
 const MyProfile = () => {
-  const { userData, setUserData, token, loadUserProfileData } =
-    useContext(AppContext);
+  const {
+    userData,
+    setUserData,
+    loading,
+    setLoading,
+    token,
+    loadUserProfileData,
+    updateUserProfileData,
+  } = useContext(AppContext);
   const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
@@ -11,6 +18,19 @@ const MyProfile = () => {
       loadUserProfileData();
     }
   }, [token]);
+  const handleSave = () => {
+    // Extract only the necessary data to send to backend
+    const updatedData = {
+      name: userData.user.name,
+      contactNumber: userData.contactNumber,
+      address: userData.address,
+      gender: userData.gender,
+      dob: userData.dob,
+    };
+
+    updateUserProfileData(updatedData);
+    setIsEdit(false);
+  };
 
   return (
     userData && (
@@ -26,7 +46,13 @@ const MyProfile = () => {
             className="bg-gray-50 text-3xl font-medium max-w-60 mt-4"
             type="text"
             onChange={(e) =>
-              setUserData((prev) => ({ ...prev, name: e.target.value }))
+              setUserData((prev) => ({
+                ...prev,
+                user: {
+                  ...prev.user,
+                  name: e.target.value,
+                },
+              }))
             }
             value={userData.user.name}
           />
@@ -67,7 +93,7 @@ const MyProfile = () => {
                   onChange={(e) =>
                     setUserData((prev) => ({
                       ...prev,
-                      address: { ...prev.address, address: e.target.value },
+                      address: { ...prev, address: e.target.value },
                     }))
                   }
                   value={userData.address}
@@ -114,10 +140,13 @@ const MyProfile = () => {
         <div className="mt-10">
           {isEdit ? (
             <button
-              onClick={() => setIsEdit(false)}
-              className="border border-primary px-8 py-2 rounded-full hover:bg-[#5f6fff] hover:text-white transition-all"
+              onClick={handleSave}
+              disabled={loading}
+              className={`border border-primary px-8 py-2 rounded-full hover:bg-[#5f6fff] hover:text-white transition-all ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Save information
+              {loading ? "Saving..." : "Save information"}
             </button>
           ) : (
             <button

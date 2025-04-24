@@ -41,11 +41,14 @@ const DoctorContextProvider = (props) => {
   // Getting Doctor profile data from Database using API
   const getProfileData = async () => {
     try {
-      const { data } = await axios.get(backendUrl + "/api/doctors/doctor", {
-        headers: {
-          Authorization: `Bearer ${dToken}`, // Use Bearer scheme if that's the expected format
-        },
-      });
+      const { data } = await axios.get(
+        backendUrl + `/api/doctors/doctor/get-user-profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${dToken}`, // Use Bearer scheme if that's the expected format
+          },
+        }
+      );
 
       console.log(data.doctorDto);
       setProfileData(data.doctorDto);
@@ -132,6 +135,38 @@ const DoctorContextProvider = (props) => {
     }
   };
 
+    const updateProfile = async () => {
+      try {
+        const updateData = {
+          address: profileData.address,
+          fees: profileData.fees,
+          aboutDoctor: profileData.aboutDoctor,
+          availability: profileData.availability,
+        };
+  
+        const { data } = await axios.put(
+          `${backendUrl}/api/doctors/doctor/update-profile`,
+          updateData,
+          {
+            headers: {
+              Authorization: `Bearer ${dToken}`,
+            },
+          }
+        );
+  
+        if (data.statusCode === 200) {
+          toast.success(data.message);
+          setIsEdit(false);
+          await getProfileData();
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.message || error.message);
+        console.error(error);
+      }
+    };
+
   const value = {
     dToken,
     setDToken,
@@ -149,6 +184,7 @@ const DoctorContextProvider = (props) => {
     profileData,
     setProfileData,
     getProfileData,
+    updateProfile
   };
 
   return (
