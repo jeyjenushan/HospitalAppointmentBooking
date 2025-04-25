@@ -9,15 +9,12 @@ import java.util.Set;
 public interface DoctorService {
     Response deleteDoctor(Long doctorId);
     Response fetchAllDoctors();
-
     Response updateDoctor(String email, DoctorEntity doctorEntity);
     Response getDoctorsBySpecialization(String specialization);
     Response getDoctorAppointments(Long doctorId);
     Response checkDoctorAvailability(Long doctorId);
     Response changeDoctorAvailability(Long doctorId);
-
     Response isAuthHeader(String authHeader);
-
     Response fetchDoctorById(Long doctorId);
-
+    Response getDoctor(String email);
 }

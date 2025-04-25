@@ -67,7 +67,18 @@ public class DoctorController {
 
     }
 
+    @GetMapping("/doctor/get-user-profile")
+    public ResponseEntity<Response> getDoctorProfile(
+            @RequestHeader("Authorization") String authHeader
+           ) {
 
+        Response response1 = doctorService.isAuthHeader(authHeader);
+        String email = jwtTokenProvider.extractUsername(response1.getToken());
+        Response response = doctorService.getDoctor(email);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+
+
+    }
 
 
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-@Service
+
 public interface PaymentService {
     Response verifyStripePayment(Map<String, String> payload);
     Response createStripeSession( Map<String, String> payload,

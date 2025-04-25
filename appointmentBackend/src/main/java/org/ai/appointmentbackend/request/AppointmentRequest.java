@@ -1,16 +1,10 @@
 package org.ai.appointmentbackend.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class AppointmentRequest {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
@@ -21,8 +15,15 @@ public class AppointmentRequest {
     private Long patientId;
     private Long doctorId;
 
+    public AppointmentRequest() {
+    }
 
-
+    public AppointmentRequest(LocalDate date, LocalTime time, Long patientId, Long doctorId) {
+        this.date = date;
+        this.time = time;
+        this.patientId = patientId;
+        this.doctorId = doctorId;
+    }
 
     public LocalDate getDate() {
         return date;

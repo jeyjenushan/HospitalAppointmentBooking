@@ -42,7 +42,7 @@ public class PaymentServiceImplementation implements PaymentService{
 
                 if (appointment != null) {
                     appointment.setPayment(true);
-                    appointment.setCompleted(false);
+                    appointment.setCompleted(true);
                     appointment.setCancelled(false);
                     appointment.setAppointmentStatus(AppointmentStatus.COMPLETED);
                     appointmentRepository.save(appointment); // Save the updated entity

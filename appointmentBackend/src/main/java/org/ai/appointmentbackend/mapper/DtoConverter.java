@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,24 +43,27 @@ public  class  DtoConverter {
         dto.setContactNumber(savedDoctor.getContactNumber());
         dto.setAvailability(savedDoctor.getAvailability());
         dto.setExperience(savedDoctor.getExperience());
-        dto.setDegree(savedDoctor.getDegree());
+        dto.setDegree(savedDoctor.getDegree()); // Note: case sensitivity might matter
         dto.setFees(savedDoctor.getFees());
         dto.setAboutDoctor(savedDoctor.getAboutDoctor());
-
-
 
         // Convert User (only basic info)
         if (savedDoctor.getUser() != null) {
             dto.setUser(convertUserEntityToUserDto(savedDoctor.getUser()));
-
         }
 
-        // Only extract slot dates - doesn't trigger full map loading
-      if(savedDoctor.getSlotsBooked() != null) {
-          dto.setSlots_booked(savedDoctor.getSlotsBooked());
-      }
+        // Handle Address
+        if(savedDoctor.getAddress1() != null) {
+            AddressDto addressDto = new AddressDto(); // Initialize AddressDto
+            addressDto.setLine1(savedDoctor.getAddress1().getLine1());
+            addressDto.setLine2(savedDoctor.getAddress1().getLine2());
+            dto.setAddress(addressDto); // Set the initialized AddressDto
+        }
 
-
+        // Handle slots booked
+        if(savedDoctor.getSlotsBooked() != null) {
+            dto.setSlots_booked(new HashMap<>(savedDoctor.getSlotsBooked()));
+        }
 
         return dto;
     }

@@ -16,14 +16,16 @@ public class DoctorDto {
     private String degree;
     private Long fees;
     private String aboutDoctor;
+    private AddressDto address;
     private UserDto user;
     private Map<String, Set<String>> slots_booked;
 
     public DoctorDto() {
     }
 
-    public DoctorDto(Long id, String specialization, String contactNumber, String availability, String experience, String degree, Long fees, String aboutDoctor, UserDto user, Map<String, Set<String>> slots_booked) {
+    public DoctorDto(Long id, String specialization,AddressDto addressDto, String contactNumber, String availability, String experience, String degree, Long fees, String aboutDoctor, UserDto user, Map<String, Set<String>> slots_booked) {
         this.id = id;
+        this.address=addressDto;
         this.specialization = specialization;
         this.contactNumber = contactNumber;
         this.availability = availability;
@@ -33,6 +35,14 @@ public class DoctorDto {
         this.aboutDoctor = aboutDoctor;
         this.user = user;
         this.slots_booked = slots_booked;
+    }
+
+    public AddressDto getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDto address) {
+        this.address = address;
     }
 
     public Long getId() {

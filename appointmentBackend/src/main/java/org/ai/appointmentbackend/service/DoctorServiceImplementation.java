@@ -10,6 +10,7 @@ import org.ai.appointmentbackend.mapper.DtoConverter;
 import org.ai.appointmentbackend.repository.AppointmentRepository;
 import org.ai.appointmentbackend.repository.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -333,8 +334,44 @@ public class DoctorServiceImplementation implements DoctorService{
         return response;
     }
 
+    @Override
+    public Response getDoctor(String email) {
+        Response response = new Response();
 
 
+        try {
+
+
+            if (email == null || email.trim().isEmpty()) {
+                throw new IllegalArgumentException("Email cannot be empty");
+            }
+
+            DoctorEntity doctor = doctorRepository.findByUserEmail(email);
+            if (doctor == null) {
+
+                response.setMessage("Doctor not found");
+                response.setStatusCode(404);
+                return response;
+            }
+
+            DoctorDto doctorDto = DtoConverter.convertDoctorEntityToDoctorDto(doctor);
+             response.setDoctorDto(doctorDto);
+             response.setStatusCode(200);
+             response.setMessage("Doctor details retrieved successfully");
+             return response;
+
+
+        } catch (IllegalArgumentException e) {
+            response.setMessage("failed to retrived doctor details found");
+            response.setStatusCode(400);
+            return response;
+
+        } catch (Exception e) {
+            response.setMessage("failed to retrived doctor details found");
+            response.setStatusCode(400);
+            return response;
+        }
+    }
 
     @Override
     public Response checkDoctorAvailability(Long id) {
